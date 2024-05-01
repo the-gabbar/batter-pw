@@ -1,5 +1,5 @@
-# Use Node.js as the base image
-FROM node:latest
+# Use a specific Node.js version supported by Railway.app
+FROM node:14
 
 # Set the working directory in the container
 WORKDIR /app
@@ -8,16 +8,14 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm install --production
 
-# Copy the rest of the application code to the working directory
-COPY . .
+# Copy only necessary files for production (excluding development dependencies)
+COPY .next ./.next
+COPY public ./public
 
-# Build the Next.js application
-RUN npm run build
-
-# Expose the port Next.js is running on (default is 3000)
-EXPOSE 3000
+# Expose the port Next.js is running on
+EXPOSE $PORT
 
 # Command to run the Next.js application
 CMD ["npm", "start"]
